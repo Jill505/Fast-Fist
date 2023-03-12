@@ -9,6 +9,10 @@ using UnityEngine.SceneManagement;
 
 public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 {
+    bool isMeLogin = true;
+
+
+
     [SerializeField]
     private NetworkRunner networkRunner = null;
 
@@ -17,6 +21,15 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     Dictionary<PlayerRef, NetworkObject> playerList = new Dictionary<PlayerRef, NetworkObject>();//玩家清單
     Dictionary<PlayerRef, string> playerNameList = new Dictionary<PlayerRef, string>();//玩家名字清單
+
+    [Networked]
+    public int playerNumber { get;set; }
+
+    [SerializeField]
+    Text player1Name;
+
+    [SerializeField]
+    Text player2Name;
 
     public void InternetStartGame()
     {
@@ -48,7 +61,28 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, Vector2.up, Quaternion.identity, player);
 
         playerList.Add(player, networkPlayerObject);
-        playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);//這邊等等看怎麼改
+        //playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);//這邊等等看怎麼改
+
+        player1Name = GameObject.Find("P1Name").GetComponent<Text>();
+        player2Name = GameObject.Find("P2Name").GetComponent<Text>();
+
+        playerNumber++;
+
+        Debug.Log("玩家人數：" + playerNumber);
+
+        if (isMeLogin)
+        {
+            isMeLogin = false;
+            if (playerNumber == 1)
+            {
+                player1Name.text = localDataBase.PlayerData.Name;
+            }
+            else if (playerNumber == 2)
+            {
+                player2Name.text = localDataBase.PlayerData.Name;
+            }
+            HintWord_RPC();
+        }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -60,7 +94,10 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         }*/
     }
 
-    public void OnInput(NetworkRunner runner, NetworkInput input) { }
+    public void OnInput(NetworkRunner runner, NetworkInput input) 
+    {
+
+    }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnConnectedToServer(NetworkRunner runner) { }
@@ -72,6 +109,28 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
     public void OnSceneLoadDone(NetworkRunner runner) { }
-    public void OnSceneLoadStart(NetworkRunner runner) { }
+    public void OnSceneLoadStart(NetworkRunner runner) 
+    {
+    }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
+
+
+    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
+    public void HintWord_RPC()
+    {
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("第" + playerNumber + "位玩家 "+localDataBase.PlayerData.Name+" 加入了遊戲");
+    }
+    /*
+    //將玩家歸類為P1或P2
+    void sortingP1orP2()
+    {
+        if (playerNumber == 1)
+        {
+            //顯示在左邊
+        }
+        else if (playerNumber == 2)
+        {
+            //顯示在右邊
+        }
+    }*/
 }
