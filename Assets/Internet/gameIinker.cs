@@ -9,8 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 {
-    bool isMeLogin = true;
-
+    bool isMeLogin = true;//在進入場景時為false 離開時為true
 
 
     [SerializeField]
@@ -27,9 +26,17 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     [SerializeField]
     Text player1Name;
-
     [SerializeField]
     Text player2Name;
+
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+
+        }
+    }
 
     public void InternetStartGame()
     {
@@ -58,6 +65,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        Debug.Log("OnPlayeJoined");
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, Vector2.up, Quaternion.identity, player);
 
         playerList.Add(player, networkPlayerObject);
@@ -81,7 +89,8 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             {
                 player2Name.text = localDataBase.PlayerData.Name;
             }
-            HintWord_RPC();
+            playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);
+            HintWord_RPC(playerNameList[player]);
         }
     }
 
@@ -96,29 +105,44 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input) 
     {
+        var data = new playerInputData();
+        var data2 = new playerInputData();
+
+        data.playerSort = 10;
+        data2.playerSort = 20;
+
+        input.Set(data2);
+        input.Set(data);
 
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
-    public void OnConnectedToServer(NetworkRunner runner) { }
+    public void OnConnectedToServer(NetworkRunner runner) {
+        Debug.Log("OnConnectedToServer(NetworkRunner runner)");
+    }
     public void OnDisconnectedFromServer(NetworkRunner runner) { }
-    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
+    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) {
+        Debug.Log("OnConnect Request");
+    }
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
     public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
     public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data) { }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
-    public void OnSceneLoadDone(NetworkRunner runner) { }
+    public void OnSceneLoadDone(NetworkRunner runner) {
+        Debug.Log("OnSceneLoadDone");
+    }
     public void OnSceneLoadStart(NetworkRunner runner) 
     {
+        Debug.Log("OnSceneLoadStart");
     }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
 
 
     [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void HintWord_RPC()
+    public void HintWord_RPC(string playerName)
     {
-        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("第" + playerNumber + "位玩家 "+localDataBase.PlayerData.Name+" 加入了遊戲");
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("第" + playerNumber + "位玩家 "+ playerName + " 加入了遊戲");
     }
     /*
     //將玩家歸類為P1或P2
