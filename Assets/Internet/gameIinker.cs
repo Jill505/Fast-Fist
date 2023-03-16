@@ -9,14 +9,14 @@ using UnityEngine.SceneManagement;
 
 public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 {
-    bool isMeLogin = true;//在進入場景時為false 離開時為true
+    bool isMeLogin = true;//在進入場景時為false 離開時為true 用於判斷是否是自己進入場景
 
 
     [SerializeField]
     private NetworkRunner networkRunner = null;
 
     [SerializeField]
-    private NetworkPrefabRef playerPrefab;
+    private NetworkPrefabRef playerPrefab;//玩家prefab
 
     Dictionary<PlayerRef, NetworkObject> playerList = new Dictionary<PlayerRef, NetworkObject>();//玩家清單
     Dictionary<PlayerRef, string> playerNameList = new Dictionary<PlayerRef, string>();//玩家名字清單
@@ -29,14 +29,10 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField]
     Text player2Name;
 
+    [SerializeField]
+    public gameCore gameCores;//遊戲核心
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-
-        }
-    }
+    public internetPlayer myPlayer;
 
     public void InternetStartGame()
     {
@@ -66,6 +62,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         Debug.Log("OnPlayeJoined");
+        //gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
         NetworkObject networkPlayerObject = runner.Spawn(playerPrefab, Vector2.up, Quaternion.identity, player);
 
         playerList.Add(player, networkPlayerObject);
@@ -75,32 +72,61 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         player2Name = GameObject.Find("P2Name").GetComponent<Text>();
 
         playerNumber++;
+        gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
+        gameCores.numberIntheScene++;
 
         Debug.Log("玩家人數：" + playerNumber);
 
-        if (isMeLogin)
+        if (isMeLogin)//是自己log in
         {
             isMeLogin = false;
-            if (playerNumber == 1)
+
+            /*if (playerNumber == 1)
             {
                 player1Name.text = localDataBase.PlayerData.Name;
             }
             else if (playerNumber == 2)
             {
                 player2Name.text = localDataBase.PlayerData.Name;
+            }*/
+
+            //playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);
+            //HintWord_RPC(playerNameList[player]);
+
+            myPlayer = networkPlayerObject.GetComponent<internetPlayer>();//取得自己角色的playerObject
+
+            if (gameCores.numberIntheScene == 1)
+            {
+                gameCores.p1NameString = localDataBase.PlayerData.Name;
+                //gameCores.player1Name.text = localDataBase.PlayerData.Name;
+
+                gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p1NameString + " 加入了遊戲");
+                gameCores.namePlayer();
             }
-            playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);
-            HintWord_RPC(playerNameList[player]);
+            else if (gameCores.numberIntheScene == 2)
+            {
+                gameCores.p2NameString = localDataBase.PlayerData.Name;
+                //gameCores.player2Name.text = localDataBase.PlayerData.Name;
+
+                gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
+                gameCores.namePlayer();
+            }
+
+            if (gameCores.numberIntheScene == 2)
+            {
+                Debug.Log("遊戲開始");
+            }
         }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        /*if (playerList.TryGetValue(player, out NetworkObject networkObject))
+        if (playerList.TryGetValue(player, out NetworkObject networkObject))
         {
             runner.Despawn(networkObject);
             playerList.Remove(player);
-        }*/
+            gameCores.numberIntheScene--;
+        }
     }
 
     public void OnInput(NetworkRunner runner, NetworkInput input) 
