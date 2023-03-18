@@ -6,6 +6,7 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -57,6 +58,8 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             Scene = 2,//combat場景
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+
+        Debug.Log("StartGame Async");
     }
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -68,59 +71,32 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         playerList.Add(player, networkPlayerObject);
         //playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);//這邊等等看怎麼改
 
-        player1Name = GameObject.Find("P1Name").GetComponent<Text>();
-        player2Name = GameObject.Find("P2Name").GetComponent<Text>();
+        //player1Name = GameObject.Find("P1Name").GetComponent<Text>();
+        //player2Name = GameObject.Find("P2Name").GetComponent<Text>();
 
-        playerNumber++;
-        gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
-        gameCores.numberIntheScene++;
+        //playerNumber++;
 
-        Debug.Log("玩家人數：" + playerNumber);
+        //while (GameObject.Find("gameCore") == null)
+        //{
+        //    Debug.Log("Waiting to be capture");
+        //}
+        Debug.Log("Ready To capture...?");
+        //waitingDuaSha();//偉大的capture!
+        StartCoroutine(captureGameCore());
+        //     gameCores.numberIntheScene++;
 
-        if (isMeLogin)//是自己log in
-        {
-            isMeLogin = false;
+        //     Debug.Log("玩家人數：" + gameCores.numberIntheScene);
+        // GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("玩家加入！");
 
-            /*if (playerNumber == 1)
-            {
-                player1Name.text = localDataBase.PlayerData.Name;
-            }
-            else if (playerNumber == 2)
-            {
-                player2Name.text = localDataBase.PlayerData.Name;
-            }*/
-
-            //playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);
-            //HintWord_RPC(playerNameList[player]);
-
-            myPlayer = networkPlayerObject.GetComponent<internetPlayer>();//取得自己角色的playerObject
-
-            if (gameCores.numberIntheScene == 1)
-            {
-                gameCores.p1NameString = localDataBase.PlayerData.Name;
-                //gameCores.player1Name.text = localDataBase.PlayerData.Name;
-
-                gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p1NameString + " 加入了遊戲");
-                gameCores.namePlayer();
-            }
-            else if (gameCores.numberIntheScene == 2)
-            {
-                gameCores.p2NameString = localDataBase.PlayerData.Name;
-                //gameCores.player2Name.text = localDataBase.PlayerData.Name;
-
-                gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
-                gameCores.namePlayer();
-            }
-
-            if (gameCores.numberIntheScene == 2)
-            {
-                Debug.Log("遊戲開始");
-            }
-        }
+        // if (!IsInvoking("cycleHint"))
+        // {
+        //     Invoke("cycleHint",2f);
+        // }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
+        Debug.Log("有玩家離開了遊戲");
         if (playerList.TryGetValue(player, out NetworkObject networkObject))
         {
             runner.Despawn(networkObject);
@@ -164,12 +140,6 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     }
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
 
-
-    [Rpc(RpcSources.InputAuthority, RpcTargets.All)]
-    public void HintWord_RPC(string playerName)
-    {
-        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("第" + playerNumber + "位玩家 "+ playerName + " 加入了遊戲");
-    }
     /*
     //將玩家歸類為P1或P2
     void sortingP1orP2()
@@ -183,4 +153,102 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             //顯示在右邊
         }
     }*/
+
+    async Task waitingToCaptureGameCore()
+    {
+        while (gameCores == null)
+        {
+            Debug.Log("Waiting to be capture");
+            if (!!GameObject.Find("gameCore"))
+            {
+                gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
+            }
+        }
+        Debug.Log("capture Susses!");
+    }
+
+    async void waitingDuaSha()
+    {
+        await waitingToCaptureGameCore();
+    }
+
+    void cycleHint()
+    {
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("現在場景內玩家人數為"+gameCores.numberIntheScene);
+        Invoke("cycleHint", 1f);
+    }
+
+    IEnumerator captureGameCore()
+    {
+        while (gameCores == null)
+        {
+            Debug.Log("Waiting to be capture");
+            if (!!GameObject.Find("gameCore"))
+            {
+                gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+        Debug.Log("capture Susses!");
+        yield return null;
+        gameCores.numberIntheScene++;
+        Debug.Log("玩家人數：" + gameCores.numberIntheScene);
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("玩家加入！");
+
+        if (isMeLogin)//是自己log in
+        {
+            isMeLogin = false;
+            /*
+                if (playerNumber == 1)
+                {
+                    player1Name.text = localDataBase.PlayerData.Name;
+                }
+                else if (playerNumber == 2)
+                {
+                    player2Name.text = localDataBase.PlayerData.Name;
+                }
+            */
+            //playerNameList.Add(player, playerList[player].GetComponent<playerInformation>().myName);
+            //HintWord_RPC(playerNameList[player]);
+
+            //myPlayer = networkPlayerObject.GetComponent<internetPlayer>();//取得自己角色的playerObject
+            //好像不能這樣用喔?
+            if (gameCores.numberIntheScene == 1)
+            {
+                Debug.Log("玩家人數為1!");
+                gameCores.p1NameString = localDataBase.PlayerData.Name;
+                //gameCores.player1Name.text = localDataBase.PlayerData.Name;
+
+                //gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p1NameString + " 加入了遊戲");
+                //gameCores.namePlayer();
+            }
+            else if (gameCores.numberIntheScene == 2)
+            {
+                gameCores.p2NameString = localDataBase.PlayerData.Name;
+                //gameCores.player2Name.text = localDataBase.PlayerData.Name;
+
+                //gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
+                //gameCores.namePlayer();
+
+                Debug.Log("玩家人數為2!");
+            }
+        }
+
+        if (gameCores.numberIntheScene == 1)
+        {
+            gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p1NameString + " 加入了遊戲");
+            Debug.Log("玩家人數為1!");
+        }
+        if (gameCores.numberIntheScene == 2)
+        {
+            gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
+            Debug.Log("玩家人數為2!");
+        }
+        gameCores.namePlayer();
+        if (gameCores.numberIntheScene <= 2)
+        {
+            Debug.Log("遊戲開始");//旁觀者模式加入後 這邊記得多加一個條件
+            gameCores.reStartGame();
+        }
+    }
 }
