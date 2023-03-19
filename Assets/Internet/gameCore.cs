@@ -19,7 +19,8 @@ public class gameCore : NetworkBehaviour
     public Text player1Name;
     public Text player2Name;
 
-    public void namePlayer()
+    [Rpc(RpcSources.All,RpcTargets.All)]
+    public void Rpc_namePlayer()
     {
         player1Name.text = p1NameString;
         player2Name.text = p2NameString;

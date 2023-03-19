@@ -215,7 +215,6 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             //好像不能這樣用喔?
             if (gameCores.numberIntheScene == 1)
             {
-                Debug.Log("玩家人數為1!");
                 gameCores.p1NameString = localDataBase.PlayerData.Name;
                 //gameCores.player1Name.text = localDataBase.PlayerData.Name;
 
@@ -229,8 +228,6 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
                 //gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
                 //gameCores.namePlayer();
-
-                Debug.Log("玩家人數為2!");
             }
         }
 
@@ -244,8 +241,8 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             gameCores.hintWordBroadCast("第" + gameCores.numberIntheScene + "位玩家 " + gameCores.p2NameString + " 加入了遊戲");
             Debug.Log("玩家人數為2!");
         }
-        gameCores.namePlayer();
-        if (gameCores.numberIntheScene <= 2)
+        gameCores.Rpc_namePlayer();
+        if (gameCores.numberIntheScene >= 2)
         {
             Debug.Log("遊戲開始");//旁觀者模式加入後 這邊記得多加一個條件
             gameCores.reStartGame();

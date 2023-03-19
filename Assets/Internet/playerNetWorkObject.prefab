@@ -58,6 +58,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: -3517518625955608599}
+  - {fileID: -200983873259392975}
   SimulationBehaviours: []
 --- !u!114 &8218156018968304597
 MonoBehaviour:
@@ -98,4 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd0372e2f30038145b76b4578ed84d43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   gameCores: {fileID: 0}
+  _moodSelectionSort: 0
+  _characterSelectionSort: 0

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 
-public class internetPlayer : MonoBehaviour
+public class internetPlayer : NetworkBehaviour
 {
     [SerializeField]
     public gameCore gameCores;
@@ -16,5 +16,5 @@ public class internetPlayer : MonoBehaviour
     private void Awake()
     {
         gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
-    } 
+    }
 }
