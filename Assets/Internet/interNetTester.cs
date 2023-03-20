@@ -13,6 +13,7 @@ public class interNetTester : NetworkBehaviour
         {
             Debug.Log("來自interNetTester："+data.playerSort);
             myPlayerSort = data.playerSort;
+            syncTestText.text = "同步數字：\n"+testNumber;
         }
     }
 
@@ -22,7 +23,7 @@ public class interNetTester : NetworkBehaviour
     public void AddNumberTest()
     {
         testNumber++;
-        syncTestText.text = "同步數字：\n"+testNumber;
+
     }
     // Start is called before the first frame update
     void Start()

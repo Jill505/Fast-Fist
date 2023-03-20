@@ -55,10 +55,10 @@ public class localDataBase : MonoBehaviour
         PlayerData.diamond = Swaper.diamond;
         PlayerData.gold = Swaper.gold;
 
+        PlayerData.Name = Swaper.Name;
+
         PlayerData.selectionCharacter = Swaper.selectionCharacter;
         PlayerData.selectionMoodsort = Swaper.selectionMoodsort;
-
-        PlayerData.Name = Swaper.Name;
 
         PlayerData.loginTimes = Swaper.loginTimes;
     }
