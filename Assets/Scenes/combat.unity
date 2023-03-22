@@ -505,8 +505,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 69}
-  m_SizeDelta: {x: 539.7352, y: 101.2004}
+  m_AnchoredPosition: {x: 0, y: 50.81948}
+  m_SizeDelta: {x: 539.7352, y: 137.5614}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1215068287
 MonoBehaviour:
@@ -979,7 +979,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: add number
+  m_Text: BattleInput Simulation
 --- !u!222 &1563047430
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1129,7 +1129,7 @@ GameObject:
   - component: {fileID: 1805462287}
   - component: {fileID: 1805462286}
   m_Layer: 5
-  m_Name: P1Name
+  m_Name: P0Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1211,9 +1211,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'PlayerName
-
-'
+  m_Text: P0(NotReady)
 --- !u!222 &1805462288
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1235,7 +1233,7 @@ GameObject:
   - component: {fileID: 1926195663}
   - component: {fileID: 1926195662}
   m_Layer: 5
-  m_Name: P2Name
+  m_Name: P1Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1317,9 +1315,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'PlayerName
-
-'
+  m_Text: P1(NotReady)
 --- !u!222 &1926195664
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1513,13 +1509,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _numberIntheScene: 0
+  _p0NameString: 
   _p1NameString: 
-  _p2NameString: 
+  p0: {fileID: 0}
+  p1: {fileID: 0}
   _Frame: 0
-  _turnToPlayer1: 0
+  _turnToPlayer0: 0
+  _AttackCall: 0
+  _DefendCall: 0
+  _startGameBool: 0
   bgmPlayer: {fileID: 1041711996}
-  player1Name: {fileID: 1805462287}
-  player2Name: {fileID: 1926195663}
+  player0Name: {fileID: 1805462287}
+  player1Name: {fileID: 1926195663}
 --- !u!4 &2121415751
 Transform:
   m_ObjectHideFlags: 0
