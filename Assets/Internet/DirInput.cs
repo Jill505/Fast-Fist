@@ -12,13 +12,20 @@ public class DirInput : MonoBehaviour
 
     public float ReactTime;
 
+    public gameIinker gameRunner;
+    public gameCore gameCores;
+    public internetPlayer myInternetPlayer;
+
     float reactCountdown;
 
     // Start is called before the first frame update
     void Start()
     {
         allowRange = 50f;
-        Invoke("makeDis", 0f);
+        //("makeDis", 0f);
+
+        gameRunner = GameObject.Find("NetworkRunner").GetComponent<gameIinker>();
+        StartCoroutine(captureCoruotine());
     }
 
     Vector2 lastPos;//鼠标上次位置
@@ -85,8 +92,8 @@ public class DirInput : MonoBehaviour
     {
         dir = Random.Range(0f, 360f);
 
-        arrow.transform.rotation = Quaternion.Euler(0f, 0f, dir);
-        Invoke("makeDis", ReactTime);
+        //arrow.transform.rotation = Quaternion.Euler(0f, 0f, dir);
+        //Invoke("makeDis", ReactTime);
         reactCountdown = ReactTime;
     }
 
@@ -101,6 +108,8 @@ public class DirInput : MonoBehaviour
         float rangeMin = dir - allowRange;
 
         Debug.Log(rangeMin + "rf" + rangeMax);
+
+        Debug.Log("角度為："+returnValue);
 
         if (returnValue <= rangeMax && returnValue >= rangeMin)
         {
@@ -118,5 +127,25 @@ public class DirInput : MonoBehaviour
         {
             Debug.Log("NO");
         }
+    }
+
+    IEnumerator captureCoruotine()
+    {
+        while (gameCores == null)
+        {
+            if (GameObject.Find("gameCores"))
+            {
+                gameCores = GameObject.Find("gameCores").GetComponent<gameCore>();
+            }
+            yield return new WaitForSeconds(0.025f);
+        }
+
+        while (myInternetPlayer == null)
+        {
+            myInternetPlayer = gameRunner.myPlayer;
+            yield return new WaitForSeconds(0.025f);
+        }
+
+        yield return null;
     }
 }

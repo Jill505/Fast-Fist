@@ -10,6 +10,8 @@ public class internetPlayer : NetworkBehaviour
 
     public int myPlayerSort;
 
+    public DirInput dirInput;
+
    [Networked]
    public string playerName { get; set; }
 
@@ -32,6 +34,10 @@ public class internetPlayer : NetworkBehaviour
     public float Ablock { get; set; }
 
     //玩家
+    [Networked] float AtkDir { get; set; }
+    [Networked] float DefDir { get; set; }
+    [Networked] float FrameChanged { get; set; }
+
 
     //測試
     [Networked]
@@ -44,15 +50,58 @@ public class internetPlayer : NetworkBehaviour
     private void Awake()
     {
         gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
+        dirInput = GameObject.Find("DirInputSystem").GetComponent<DirInput>();
         //playerName = localDataBase.PlayerData.Name;
+    }
+
+    public PlayerRef myLocalPlayer()
+    {
+        return Runner.LocalPlayer;
     }
 
     public override void FixedUpdateNetwork()
     {
+
+        //playerName = localDataBase.PlayerData.Name;
+        gameCores.Rpc_namePlayer();
+
+
+        //同步網路數據
+        bool swapBool;
+        swapBool = gameCores.turnToPlayer0;
+        swapBool = gameCores.AttackCall;
+        swapBool = gameCores.DefendCall;
+
+        if (GetInput(out TestStruck data))
+        {
+            TestVariable += data.uploadInt;
+            if (myPlayerSort != 0)
+            {
+                TestVariable -= 2 * data.uploadInt;
+            }
+        }
+
+        if (GetInput(out playerInputData data0))
+        {
+            characterSelectionSort = data0.characterSelectionSort;
+            moodSelectionSort = data0.moodSelectionSort;
+            playerName = localDataBase.PlayerData.Name;
+
+            CharacterGivingValue(characterSelectionSort);
+
+            myPlayerSort = gameCores.numberIntheScene;
+
+            Runner.gameObject.GetComponent<gameIinker>().brocastedName = true;
+        }
+
+        if (GetInput(out AtkInputData data1))
+        {
+
+        }
+
+
         if (Object.HasInputAuthority)
         {
-            Debug.Log("我有這個裝置的inputAuthority喔~");
-            //playerName = localDataBase.PlayerData.Name;
             if (gameCores.startGameBool)
             {
                 if (myPlayerSort == 0)
@@ -109,37 +158,6 @@ public class internetPlayer : NetworkBehaviour
             
         }
 
-        //playerName = localDataBase.PlayerData.Name;
-        gameCores.Rpc_namePlayer();
-
-
-        //同步網路數據
-        bool swapBool;
-        swapBool = gameCores.turnToPlayer0;
-        swapBool = gameCores.AttackCall;
-        swapBool = gameCores.DefendCall;
-
-        if (GetInput(out TestStruck data))
-        { 
-            TestVariable += data.uploadInt;
-            if (myPlayerSort != 0)
-            {
-                TestVariable -= 2 * data.uploadInt;
-            }
-        }
-
-        if (GetInput(out playerInputData data0))
-        {
-           characterSelectionSort = data0.characterSelectionSort;
-           moodSelectionSort = data0.moodSelectionSort;
-            playerName = localDataBase.PlayerData.Name;
-
-            CharacterGivingValue(characterSelectionSort);
-
-            myPlayerSort = gameCores.numberIntheScene;
-            
-            Runner.gameObject.GetComponent<gameIinker>().brocastedName = true;
-        }
     }
 
     public void CharacterGivingValue(int characterSorting)

@@ -30,11 +30,15 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField]
     public gameCore gameCores;//遊戲核心
 
-    public internetPlayer myPlayer;
-
     //本地呼叫器
     public bool TimeToUpload;
     public bool brocastedName = false;
+    public bool AtkCall = false;
+
+    //本地抓取的變數
+    public internetPlayer myPlayer;//本地玩家
+    public DirInput MyDirInput;
+    PlayerRef myPlayerRef;
 
     public void InternetStartGame()
     {
@@ -78,6 +82,8 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log("Ready To capture...?");
         StartCoroutine(captureGameCore(player));
 
+        myPlayerRef = player;
+
         if (!isMeLogin)
         {
             Debug.Log("有其他玩家加入辣");
@@ -103,6 +109,28 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input) 
     {
+        if (MyDirInput == null)
+        {
+            if (GameObject.Find("DirInputSystem"))
+            {
+                MyDirInput = GameObject.Find("DirInputSystem").GetComponent<DirInput>();
+            }
+        }
+        else
+        {
+            //執行DirInput數據上傳
+        }
+
+        if (myPlayer == null)
+        {
+            //waiting
+        }
+        else
+        {
+            //執行interNetPlayer數據上傳
+        }
+
+
         if (!brocastedName)
         {
             playerInputData data0 = new playerInputData();
@@ -114,11 +142,15 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
         if (TimeToUpload)
         {
-            var data3 = new TestStruck();
-            data3.uploadInt = 1;
-            input.Set(data3);
+            var dataMinas1 = new TestStruck();
+            dataMinas1.uploadInt = 1;
+            input.Set(dataMinas1);
             TimeToUpload = false;
             Debug.Log("資料上載");
+        }
+        if (AtkCall)
+        {
+            
         }
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -192,7 +224,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
         if (isMeLogin)//是自己log in
         {
-
+            MyDirInput = GameObject.Find("DirInputSystem").GetComponent<DirInput>();
 
             isMeLogin = false;
             /*internetPlayer playerComponentInternetPlayer;
