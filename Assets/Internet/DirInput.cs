@@ -18,6 +18,9 @@ public class DirInput : MonoBehaviour
 
     float reactCountdown;
 
+    public bool allowInputAtk;
+    public bool allowInputDef;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +48,16 @@ public class DirInput : MonoBehaviour
             offset = currPos - lastPos;
             returnValue = angle(lastPos, currPos);
             DoMatch(offset);
+
+            //發出訊告 告知完成了
+            if (allowInputAtk)
+            {
+                myInternetPlayer.AtkDataGiving(dir);
+            }
+            if (allowInputDef)
+            {
+
+            }
         }
     }
 

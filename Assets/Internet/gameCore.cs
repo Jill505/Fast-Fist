@@ -64,6 +64,7 @@ public class gameCore : NetworkBehaviour
         GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("遊戲... 開始!\n 正在播放：CommonEXEmusic");
 
         //Start play
+        yield return new WaitForSeconds(4f);
         //如果要Random纖手玩家 這邊宣告
         turnToPlayer0 = true;
         startGameBool = true;
@@ -111,7 +112,15 @@ public class gameCore : NetworkBehaviour
         //capture player's information
         if (Object.HasStateAuthority)
         {
+            if (p0 != null)
+            {
+                //同步
+            }
 
+            if (p1 != null)
+            {
+                //同步
+            }
         }
     }
 }

@@ -8,6 +8,8 @@ public class internetPlayer : NetworkBehaviour
     [SerializeField]
     public gameCore gameCores;
 
+    public gameIinker myGamelinker;
+
     public int myPlayerSort;
 
     public DirInput dirInput;
@@ -33,11 +35,18 @@ public class internetPlayer : NetworkBehaviour
     [Networked]
     public float Ablock { get; set; }
 
-    //玩家
-    [Networked] float AtkDir { get; set; }
-    [Networked] float DefDir { get; set; }
-    [Networked] float FrameChanged { get; set; }
 
+    //現存玩家數據
+    [Networked] public float AtkTime {get;set; }
+    [Networked] public float Energy { get; set; }
+    [Networked] public float UltComsume { get; set; }
+    [Networked] public float MaxmentEnergy { get; set; }
+
+
+    //玩家
+    [Networked] public float AtkDir { get; set; }
+    [Networked] public float DefDir { get; set; }
+    [Networked] public float FrameChanged { get; set; }
 
     //測試
     [Networked]
@@ -51,6 +60,12 @@ public class internetPlayer : NetworkBehaviour
     {
         gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
         dirInput = GameObject.Find("DirInputSystem").GetComponent<DirInput>();
+
+        if (Object.HasInputAuthority)//是該玩家操控
+        {
+            Runner.gameObject.GetComponent<gameIinker>().myPlayer = this;
+            myGamelinker = Runner.gameObject.GetComponent<gameIinker>();
+        }
         //playerName = localDataBase.PlayerData.Name;
     }
 
@@ -96,39 +111,44 @@ public class internetPlayer : NetworkBehaviour
 
         if (GetInput(out AtkInputData data1))
         {
-
+            data1.AtkDir = AtkDir;
         }
 
 
-        if (Object.HasInputAuthority)
+        if (Object.HasInputAuthority)//玩家有該角色操控權限
         {
-            if (gameCores.startGameBool)
+            if (gameCores.startGameBool)//遊戲開始
             {
-                if (myPlayerSort == 0)
+                if (myPlayerSort == 0)//玩家序列為0
                 {
-                    if (gameCores.turnToPlayer0 == true)
+                    if (gameCores.turnToPlayer0 == true)//輪到自己回合
                     {
-                        if (gameCores.AttackCall == true)
+                        if (gameCores.AttackCall == true)//是 提供攻擊
                         {
                             if (!AtkCallTired)
                             {
+                                //只執行一次
                                 AtkCallTired = true;
                                 StartCoroutine(Atk());
                             }
+                            //完成攻擊偵測
+
                         }
                     }
                     else
                     {
-                        if (gameCores.DefendCall == true)
+                        if (gameCores.DefendCall == true)//否 提供防守
                         {
                             if (!DefCallTired)
                             {
+                                //只執行一次
                                 DefCallTired = true;
                                 StartCoroutine(Def());
                             }
                         }
                     }
                 }
+
                 else if (myPlayerSort == 1)
                 {
                     if (gameCores.turnToPlayer0 == false)
@@ -137,6 +157,7 @@ public class internetPlayer : NetworkBehaviour
                         {
                             if (!AtkCallTired)
                             {
+                                //只執行一次
                                 AtkCallTired = true;
                                 StartCoroutine(Atk());
                             }
@@ -148,21 +169,22 @@ public class internetPlayer : NetworkBehaviour
                         {
                             if (!DefCallTired)
                             {
+                                //只執行一次
                                 DefCallTired = true;
                                 StartCoroutine(Def());
                             }
                         }
                     }
                 }
+
             }
-            
         }
+
 
     }
 
     public void CharacterGivingValue(int characterSorting)
     {
-
         playerName = localDataBase.PlayerData.Name;
         gameCores.Rpc_namePlayer();
 
@@ -177,6 +199,11 @@ public class internetPlayer : NetworkBehaviour
             Rac = 90f;
             Cur = 90f;
             Ablock = 0.2f;
+
+            AtkTime = 1f;
+
+            UltComsume = 150f;
+            MaxmentEnergy = 150f;
         }
         else if (characterSorting == 1)
         {
@@ -191,21 +218,34 @@ public class internetPlayer : NetworkBehaviour
 
     IEnumerator Atk()
     {
-
+        dirInput.allowInputAtk = true;
+        Invoke("AtkBreak",AtkTime);
         yield return null;
+        //顯示攻擊提示圓圈
+        
     }
     void AtkBreak()
     {
-
+        dirInput.allowInputAtk = false;
     }
 
     IEnumerator Def()
     {
         yield return null;
+        //顯示防守動畫
     }
     void DefBreak()
     {
 
+    }
+
+    public void AtkDataGiving(float attackDiraction)
+    {
+        AtkDir = attackDiraction;
+        //發送訊息
+        CancelInvoke("AtkBreak");
+        //圈圈消失 完成Atk()剩下該做的事情
+        myGamelinker.AtkCall = true;
     }
 }
 

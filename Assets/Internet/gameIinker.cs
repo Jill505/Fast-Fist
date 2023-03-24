@@ -33,7 +33,8 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
     //本地呼叫器
     public bool TimeToUpload;
     public bool brocastedName = false;
-    public bool AtkCall = false;
+    public bool AtkCall = false;//攻擊完成觸發器
+    public bool DefCall = false;//防守完成觸發器
 
     //本地抓取的變數
     public internetPlayer myPlayer;//本地玩家
@@ -128,12 +129,21 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         else
         {
             //執行interNetPlayer數據上傳
+
+            if (AtkCall)
+            {
+                var data2 = new AtkInputData();
+
+                data2.AtkDir = myPlayer.AtkDir;
+                data2.AtkStr = myPlayer.Str;
+                data2.AtkFinished = true;
+            }
         }
 
 
         if (!brocastedName)
         {
-            playerInputData data0 = new playerInputData();
+            var data0 = new playerInputData();
             data0.characterSelectionSort = localDataBase.PlayerData.selectionCharacter;
             data0.moodSelectionSort = localDataBase.PlayerData.selectionMoodsort;
             input.Set(data0);
@@ -147,10 +157,6 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             input.Set(dataMinas1);
             TimeToUpload = false;
             Debug.Log("資料上載");
-        }
-        if (AtkCall)
-        {
-            
         }
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
