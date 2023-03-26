@@ -135,9 +135,38 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
                 var data2 = new AtkInputData();
 
                 data2.AtkDir = myPlayer.AtkDir;
-                data2.AtkStr = myPlayer.Str;
+                data2.AtkStr = myPlayer.Str;//STR¥[Åv
                 data2.AtkFinished = true;
+
+                AtkCall = false;
+
+                input.Set(data2);
             }
+
+            if (DefCall)
+            {
+                var data3 = new DefInputData();
+
+                data3.DefDir = myPlayer.DefDir;
+                //data3.ABloack = myPlayer.Ablock;
+                //data3.cur = myPlayer.Cur;
+                data3.DefFinished = true;
+
+                DefCall = true;
+
+                input.Set(data3);
+            }
+
+            var data5 = new PlayerInformation();
+
+            data5.Hps = myPlayer.Hps;
+            data5.Rac = myPlayer.Rac;
+            data5.Str = myPlayer.Str;
+            data5.Cur = myPlayer.Cur;
+            data5.Ablock = myPlayer.Ablock;
+
+            data5.MaxmentEnergy = myPlayer.MaxmentEnergy;
+            data5.Energy = myPlayer.Energy;
         }
 
 

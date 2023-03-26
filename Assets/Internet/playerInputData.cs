@@ -37,11 +37,13 @@ public struct DefInputData : INetworkInput
 {
     public bool DefFinished;//完成呼叫
 
-    public float FrameChanged;//架式改變數據
+    //public float FrameChanged;//架式改變數據
 
     public float DefDir;//防守角度角度 用於同步防守動畫
+    //public float DefCur;//防守格檔角度
+    //public float ABloack;//精準格檔角度 Accurate Block
 
-    public int injuredType; //受傷種類 用於同步雙方動畫播放類型 0 = 未受傷; 1 = 受傷一半; 2 = 完整受傷;
+    //public int injuredType; //受傷種類 用於同步雙方動畫播放類型 0 = 未受傷; 1 = 受傷一半; 2 = 完整受傷;
 }
 
 public struct SpecialData : INetworkInput

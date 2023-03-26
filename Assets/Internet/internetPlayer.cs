@@ -13,6 +13,9 @@ public class internetPlayer : NetworkBehaviour
     public int myPlayerSort;
 
     public DirInput dirInput;
+    public circleRounding attackHintCircle;
+
+    public GameObject atkDirFistHint;//之後斟酌刪
 
    [Networked]
    public string playerName { get; set; }
@@ -44,15 +47,24 @@ public class internetPlayer : NetworkBehaviour
 
 
     //玩家
-    [Networked] public float AtkDir { get; set; }
-    [Networked] public float DefDir { get; set; }
-    [Networked] public float FrameChanged { get; set; }
 
     //測試
     [Networked]
     public int TestVariable { get; set; }
 
-    //本地
+    //網路呼叫
+    [Networked] public bool AtkFinishedCall { get; set; }
+    [Networked] public bool DefFinishedCall { get; set; }
+
+    //網路傳輸數據-交換用
+    [Networked] public float AtkStr { get; set; }
+    [Networked] public float AtkDir { get; set; }
+    [Networked] public float DefDir { get; set; }
+    [Networked] public float FrameChanged { get; set; }
+    [Networked] public float DefCur { get; set; }
+    [Networked] public float DefAblock { get; set; }
+
+    //本地呼叫
     public bool AtkCallTired;
     public bool DefCallTired;
 
@@ -60,13 +72,22 @@ public class internetPlayer : NetworkBehaviour
     {
         gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
         dirInput = GameObject.Find("DirInputSystem").GetComponent<DirInput>();
+        dirInput.myInternetPlayer = this;
+        attackHintCircle = dirInput.gameObject.transform.GetChild(0).GetComponent<circleRounding>();
+        atkDirFistHint = GameObject.Find("fist_Defult");
 
-        if (Object.HasInputAuthority)//是該玩家操控
-        {
+        //playerName = localDataBase.PlayerData.Name;
+    }
+
+    private void Start()
+    {
+        //if (Object.HasInputAuthority)//是該玩家操控
+        //{
             Runner.gameObject.GetComponent<gameIinker>().myPlayer = this;
             myGamelinker = Runner.gameObject.GetComponent<gameIinker>();
-        }
-        //playerName = localDataBase.PlayerData.Name;
+        //dirInput.gameRunner = myGamelinker;
+        //}
+        Debug.Log("Start執行了一次喔~");
     }
 
     public PlayerRef myLocalPlayer()
@@ -112,6 +133,28 @@ public class internetPlayer : NetworkBehaviour
         if (GetInput(out AtkInputData data1))
         {
             data1.AtkDir = AtkDir;
+            data1.AtkFinished = AtkFinishedCall;
+            data1.AtkStr = AtkStr;
+        }
+
+        if (GetInput(out DefInputData data2))
+        {
+            data2.DefDir = DefDir;
+            data2.DefFinished = DefFinishedCall;
+            //data2.DefCur = DefCur;
+            //data2.ABloack = DefAblock;
+        }
+
+        if (GetInput(out PlayerInformation data5))
+        {
+            data5.Hps = Hps;
+            data5.Str = Str;
+            data5.Rac = Rac;
+            data5.Cur = Cur;
+            data5.Ablock = Ablock;
+
+            data5.MaxmentEnergy = MaxmentEnergy;
+            data5.Energy = Energy;
         }
 
 
@@ -219,10 +262,10 @@ public class internetPlayer : NetworkBehaviour
     IEnumerator Atk()
     {
         dirInput.allowInputAtk = true;
-        Invoke("AtkBreak",AtkTime);
+        //Invoke("AtkBreak",AtkTime);
         yield return null;
         //顯示攻擊提示圓圈
-        
+        attackHintCircle.showMe();
     }
     void AtkBreak()
     {
@@ -232,11 +275,13 @@ public class internetPlayer : NetworkBehaviour
     IEnumerator Def()
     {
         yield return null;
+        dirInput.allowInputDef = true;
         //顯示防守動畫
+        atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir);
     }
     void DefBreak()
     {
-
+        dirInput.allowInputDef = false;
     }
 
     public void AtkDataGiving(float attackDiraction)
@@ -245,7 +290,18 @@ public class internetPlayer : NetworkBehaviour
         //發送訊息
         CancelInvoke("AtkBreak");
         //圈圈消失 完成Atk()剩下該做的事情
-        myGamelinker.AtkCall = true;
+        attackHintCircle.hideMe();
+
+        myGamelinker.AtkCall = true;//呼叫gamelinker上傳
+        dirInput.allowInputAtk = false;
+    }
+
+    public void DefDataGiving(float defendDiraction)
+    {
+        DefDir = defendDiraction;
+        CancelInvoke("DefBreak");
+        myGamelinker.DefCall = true;
+        dirInput.allowInputDef = false;
     }
 }
 

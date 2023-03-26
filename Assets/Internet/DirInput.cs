@@ -24,6 +24,8 @@ public class DirInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("我 最棒的DirInput 執行了");
+
         allowRange = 50f;
         //("makeDis", 0f);
 
@@ -56,9 +58,11 @@ public class DirInput : MonoBehaviour
             }
             if (allowInputDef)
             {
-
+                myInternetPlayer.DefDataGiving(dir);
             }
         }
+
+        //Debug.Log(myInternetPlayer);
     }
 
     void DoMatch(Vector2 _offset)
@@ -98,16 +102,6 @@ public class DirInput : MonoBehaviour
             swap += 360f;
         }
         return swap;
-    }
-
-
-    void makeDis()
-    {
-        dir = Random.Range(0f, 360f);
-
-        //arrow.transform.rotation = Quaternion.Euler(0f, 0f, dir);
-        //Invoke("makeDis", ReactTime);
-        reactCountdown = ReactTime;
     }
 
     void FixedUpdate()
@@ -155,8 +149,13 @@ public class DirInput : MonoBehaviour
 
         while (myInternetPlayer == null)
         {
-            myInternetPlayer = gameRunner.myPlayer;
-            yield return new WaitForSeconds(0.025f);
+            //myInternetPlayer = gameRunner.myPlayer;
+            if (GameObject.Find("NetworkRunner"))
+            {
+                myInternetPlayer = GameObject.Find("NetworkRunner").GetComponent<gameIinker>().myPlayer;
+                Debug.Log("DirInput 目標更動");
+                yield return new WaitForSeconds(0.025f);
+            }
         }
 
         yield return null;
