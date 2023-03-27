@@ -107,6 +107,7 @@ public class gameCore : NetworkBehaviour
 
     public void UpdatePlayer()
     {
+        bool debugBlockPlayer0;//暫時先這樣 不過加入觀戰者會有bug
         if (Object.HasStateAuthority)
         {
             if (Runner.gameObject.GetComponent<gameIinker>().playerIDList.ContainsKey(0))
@@ -114,6 +115,8 @@ public class gameCore : NetworkBehaviour
                 p0 = Runner.gameObject.GetComponent<gameIinker>().playerList[Runner.gameObject.GetComponent<gameIinker>().playerIDList[0]].gameObject.GetComponent<internetPlayer>();
                 p0.playerName = p0NameString;
                 p0.myPlayerSort = 0;
+
+                debugBlockPlayer0 = true;
             }
 
             if (Runner.gameObject.GetComponent<gameIinker>().playerIDList.ContainsKey(1))
@@ -121,6 +124,7 @@ public class gameCore : NetworkBehaviour
                 p1 = Runner.gameObject.GetComponent<gameIinker>().playerList[Runner.gameObject.GetComponent<gameIinker>().playerIDList[1]].gameObject.GetComponent<internetPlayer>();
                 p1.playerName = p1NameString;
                 p1.myPlayerSort = 1;
+                Debug.Log("我知道我是1 等等聽起來有點怪怪的");
             }
         }
     }

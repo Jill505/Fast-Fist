@@ -83,8 +83,15 @@ public class internetPlayer : NetworkBehaviour
     {
         //if (Object.HasInputAuthority)//是該玩家操控
         //{
+        if (Object.HasInputAuthority)
+        {
             Runner.gameObject.GetComponent<gameIinker>().myPlayer = this;
             myGamelinker = Runner.gameObject.GetComponent<gameIinker>();
+        }
+        if (gameCores.numberIntheScene == 2)
+        {
+            myPlayerSort = 1;
+        }
         //dirInput.gameRunner = myGamelinker;
         //}
         Debug.Log("Start執行了一次喔~");
@@ -121,40 +128,40 @@ public class internetPlayer : NetworkBehaviour
         {
             characterSelectionSort = data0.characterSelectionSort;
             moodSelectionSort = data0.moodSelectionSort;
-            playerName = localDataBase.PlayerData.Name;
+            //playerName = localDataBase.PlayerData.Name;
 
             CharacterGivingValue(characterSelectionSort);
-
-            myPlayerSort = gameCores.numberIntheScene;
 
             Runner.gameObject.GetComponent<gameIinker>().brocastedName = true;
         }
 
         if (GetInput(out AtkInputData data1))
         {
-            data1.AtkDir = AtkDir;
-            data1.AtkFinished = AtkFinishedCall;
-            data1.AtkStr = AtkStr;
+            AtkDir = data1.AtkDir;
+            AtkFinishedCall = data1.AtkFinished;
+            AtkStr = data1.AtkStr;
+            Debug.Log("接收到攻擊資料");
         }
 
         if (GetInput(out DefInputData data2))
         {
-            data2.DefDir = DefDir;
-            data2.DefFinished = DefFinishedCall;
+            DefDir = data2.DefDir;
+            DefFinishedCall = data2.DefFinished;
+            Debug.Log("接收到防守資");
             //data2.DefCur = DefCur;
             //data2.ABloack = DefAblock;
         }
 
         if (GetInput(out PlayerInformation data5))
         {
-            data5.Hps = Hps;
-            data5.Str = Str;
-            data5.Rac = Rac;
-            data5.Cur = Cur;
-            data5.Ablock = Ablock;
+            Hps = data5.Hps;
+            Str = data5.Str;
+            Rac = data5.Rac;
+            Cur = data5.Cur;
+            Ablock = data5.Ablock;
 
-            data5.MaxmentEnergy = MaxmentEnergy;
-            data5.Energy = Energy;
+            MaxmentEnergy = data5.MaxmentEnergy;
+            Energy = data5.Energy;
         }
 
 
@@ -299,7 +306,9 @@ public class internetPlayer : NetworkBehaviour
     public void DefDataGiving(float defendDiraction)
     {
         DefDir = defendDiraction;
+
         CancelInvoke("DefBreak");
+
         myGamelinker.DefCall = true;
         dirInput.allowInputDef = false;
     }

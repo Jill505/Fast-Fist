@@ -6,7 +6,7 @@ public class DirInput : MonoBehaviour
 {
     public GameObject arrow;
 
-    public float dir;
+    //public float dir;//CNM
     public float allowRange;
     public float returnValue;
 
@@ -54,14 +54,19 @@ public class DirInput : MonoBehaviour
             //發出訊告 告知完成了
             if (allowInputAtk)
             {
-                myInternetPlayer.AtkDataGiving(dir);
+                myInternetPlayer.AtkDataGiving(returnValue);
             }
             if (allowInputDef)
             {
-                myInternetPlayer.DefDataGiving(dir);
+                myInternetPlayer.DefDataGiving(returnValue);
             }
         }
 
+        if (GameObject.Find("NetworkRunner"))
+        {
+            myInternetPlayer = GameObject.Find("NetworkRunner").GetComponent<gameIinker>().myPlayer;
+            Debug.Log("DirInput 目標實時更新中");
+        }
         //Debug.Log(myInternetPlayer);
     }
 
@@ -90,7 +95,7 @@ public class DirInput : MonoBehaviour
                 Debug.Log("下");
             }
         }
-        makeSure();
+        //makeSure();
     }
 
     float angle(Vector2 from, Vector2 to)
@@ -108,7 +113,7 @@ public class DirInput : MonoBehaviour
     {
         reactCountdown -= Time.fixedDeltaTime;
     }
-
+    /*
     void makeSure()
     {
         float rangeMax = dir + allowRange;
@@ -134,7 +139,7 @@ public class DirInput : MonoBehaviour
         {
             Debug.Log("NO");
         }
-    }
+    }*/
 
     IEnumerator captureCoruotine()
     {

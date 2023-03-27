@@ -83,10 +83,15 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log("Ready To capture...?");
         StartCoroutine(captureGameCore(player));
 
-        myPlayerRef = player;
+        if (isMeLogin)
+        {
+            myPlayerRef = player;
+        }
 
         if (!isMeLogin)
         {
+
+
             Debug.Log("有其他玩家加入辣");
             Debug.Log(gameCores.p1NameString+"加入了遊戲");
 
@@ -140,6 +145,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
                 AtkCall = false;
 
+                Debug.Log("攻擊資料上傳");
                 input.Set(data2);
             }
 
@@ -154,6 +160,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
                 DefCall = true;
 
+                Debug.Log("防守資料上傳");
                 input.Set(data3);
             }
 
@@ -253,7 +260,6 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
         //gameCores.numberIntheScene++;
         //Debug.Log("玩家人數：" + gameCores.numberIntheScene);
         //GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("玩家加入！");
-
         gameCores.numberIntheScene++;
         Debug.Log("玩家人數：" + gameCores.numberIntheScene);
 
@@ -296,6 +302,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
             Debug.Log("玩家人數為2!");
         }
         gameCores.Rpc_namePlayer();
+
         if (gameCores.numberIntheScene >= 2)
         {
             Debug.Log("遊戲開始");//旁觀者模式加入後 這邊記得多加一個條件
