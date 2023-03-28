@@ -49,7 +49,9 @@ public class DirInput : MonoBehaviour
             currPos = Input.mousePosition;
             offset = currPos - lastPos;
             returnValue = angle(lastPos, currPos);
-            DoMatch(offset);
+
+            Debug.Log("原始角度為：" + returnValue);
+            //DoMatch(offset);
 
             //發出訊告 告知完成了
             if (allowInputAtk)

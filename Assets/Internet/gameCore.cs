@@ -146,11 +146,15 @@ public class gameCore : NetworkBehaviour
                 if (p0.AtkFinishedCall)
                 {
                     p0.AtkFinishedCall = false;
+                    p0.AtkCallTired = false;
                     SwapAtkDir = p0.AtkDir;
                     SwapAtkStr = p0.AtkStr;
                     //由攻擊切換到防守
                     AttackCall = false;
                     DefendCall = true;
+
+                    p0.AtkCallTired = false;
+                    //StartCoroutine(breaker(p0,0));
                 }
                 if (p0.DefFinishedCall)
                 {
@@ -161,6 +165,10 @@ public class gameCore : NetworkBehaviour
                     SwapCur = p0.Cur;
                     DefendCall = false;
                     //回合結算
+
+                    //StartCoroutine(breaker(p0, 1));
+                    p0.DefCallTired = false;
+
                     StartCoroutine(nextRound());
                 }
             }
@@ -176,6 +184,9 @@ public class gameCore : NetworkBehaviour
                     //由攻擊切換到防守
                     AttackCall = false;
                     DefendCall = true;
+                    //StartCoroutine(breaker(p1, 0));
+
+                    p1.AtkCallTired = false;
                 }
                 if (p1.DefFinishedCall)
                 {
@@ -186,57 +197,64 @@ public class gameCore : NetworkBehaviour
                     SwapCur = p1.Cur;
                     DefendCall = false;
                     //回合結算
+
+                    p1.DefCallTired = false;
+                    //StartCoroutine(breaker(p1, 1));
+
                     StartCoroutine(nextRound());
                 }
             }
         }
+
+        swapFrameShow.text = "現在架式：" + Frame;
     }
     
     IEnumerator nextRound()
     {
         //計算、同步
-        float MaxmentRange = SwapAtkDir + SwapCur;
-        float MinimentRange = SwapAtkDir - SwapCur;
+        float MaxmentRange = SwapAtkDir + SwapCur/2;
+        float MinimentRange = SwapAtkDir - SwapCur/2;
         
-        float ABlockMaxmentRange = SwapAtkDir + (SwapCur * SwapABloack);
-        float ABlockMinimentRange = SwapAtkDir - (SwapCur*SwapABloack);
+        float ABlockMaxmentRange = SwapAtkDir + (SwapCur/2 * SwapABloack);
+        float ABlockMinimentRange = SwapAtkDir - (SwapCur/2*SwapABloack);
 
 
 
         //精準格檔判斷
-        if (ABlockMaxmentRange >= SwapDefDir || SwapDefDir >= ABlockMinimentRange)
+        if (ABlockMaxmentRange >= SwapDefDir && SwapDefDir >= ABlockMinimentRange)
         {
             SwapDamageType = 2;
         }
         else if (ABlockMaxmentRange > 360f)
         {
-            if (SwapDefDir >= (ABlockMaxmentRange % 360f))
+            if (SwapDefDir <= (ABlockMaxmentRange - 360f))
             {
                 SwapDamageType = 2;
             }
         }
         else if (ABlockMinimentRange < 0f)
         {
-            if ((ABlockMinimentRange + 360f) >= SwapDefDir)
+            if ((ABlockMinimentRange + 360f) <= SwapDefDir)
             {
                 SwapDamageType = 2;
             }
         }
+
         //普通格檔判斷
-        else if (MaxmentRange >= SwapDefDir || SwapDefDir >= MinimentRange)
+        else if (MaxmentRange >= SwapDefDir && SwapDefDir >= MinimentRange)
         {
             SwapDamageType = 1;
         }
         else if (MaxmentRange > 360f)
         {
-            if (SwapDefDir >= (MaxmentRange % 360f))
+            if (SwapDefDir <= (MaxmentRange - 360f))
             {
                 SwapDamageType = 1;
             }
         }
         else if (MinimentRange < 0f)
         {
-            if ((MinimentRange + 360f) >= SwapDefDir)
+            if ((MinimentRange + 360f) <= SwapDefDir)
             {
                 SwapDamageType = 1;
             }
@@ -259,7 +277,16 @@ public class gameCore : NetworkBehaviour
         {
             Debug.Log("部分格檔");
             //精準度計算
-            float AcureatPercent = 0.5f;
+            if (MaxmentRange > 360f && MinimentRange > SwapDefDir)
+            {
+                SwapDefDir += 360f;
+            }
+            else if (MinimentRange < 0f && SwapDefDir > MaxmentRange) 
+            {
+                SwapDefDir -= 360f;
+            }
+            float AcureatPercent = Mathf.Abs(SwapAtkDir - SwapDefDir)*(1/SwapCur);
+            Debug.Log("格檔精準率："+AcureatPercent);
 
             SwapFrameChange = SwapAtkStr * (1f - AcureatPercent);
             SwapEnergyRecover = 100f * AcureatPercent;
@@ -279,6 +306,7 @@ public class gameCore : NetworkBehaviour
                 //斬殺P1
                 Debug.Log("P1斬殺!");
             }
+            Debug.Log("P1受到了"+SwapFrameChange+"點架式傷害!");
             Frame += SwapFrameChange;
         }
         else//玩家1攻擊
@@ -288,6 +316,7 @@ public class gameCore : NetworkBehaviour
                 //斬殺P0
                 Debug.Log("P0斬殺!");
             }
+            Debug.Log("P0受到了" + SwapFrameChange + "點架式傷害!");
             Frame -= SwapFrameChange;
         }
 
@@ -297,5 +326,18 @@ public class gameCore : NetworkBehaviour
         turnToPlayer0 = !turnToPlayer0;
         AttackCall = true;
         yield return null;
+    }
+
+    IEnumerator breaker(internetPlayer player,int kind)
+    {
+        yield return new WaitForSeconds(0.1f);
+        if (kind == 0)
+        {
+            player.AtkCallTired = false;
+        }
+        else
+        {
+            player.DefCallTired = false;
+        }
     }
 }

@@ -68,6 +68,8 @@ public class internetPlayer : NetworkBehaviour
     public bool AtkCallTired;
     public bool DefCallTired;
 
+    //float delLaterJustMakeSure;
+
     private void Awake()
     {
         gameCores = GameObject.Find("gameCore").GetComponent<gameCore>();
@@ -91,6 +93,7 @@ public class internetPlayer : NetworkBehaviour
         if (gameCores.numberIntheScene == 2)
         {
             myPlayerSort = 1;
+            Debug.Log("透過抑制器解決了問題");
         }
         //dirInput.gameRunner = myGamelinker;
         //}
@@ -182,7 +185,7 @@ public class internetPlayer : NetworkBehaviour
                                 StartCoroutine(Atk());
                             }
                             //完成攻擊偵測
-
+                            DefCallTired = false;
                         }
                     }
                     else
@@ -196,6 +199,7 @@ public class internetPlayer : NetworkBehaviour
                                 StartCoroutine(Def());
                             }
                         }
+                        AtkCallTired = false;
                     }
                 }
 
@@ -211,6 +215,7 @@ public class internetPlayer : NetworkBehaviour
                                 AtkCallTired = true;
                                 StartCoroutine(Atk());
                             }
+                            DefCallTired = false;
                         }
                     }
                     else
@@ -223,14 +228,15 @@ public class internetPlayer : NetworkBehaviour
                                 DefCallTired = true;
                                 StartCoroutine(Def());
                             }
+                            AtkCallTired = false;
                         }
                     }
                 }
-
             }
         }
 
-
+        //delLaterJustMakeSure++;
+        //atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, delLaterJustMakeSure);
     }
 
     public void CharacterGivingValue(int characterSorting)
@@ -284,7 +290,9 @@ public class internetPlayer : NetworkBehaviour
         yield return null;
         dirInput.allowInputDef = true;
         //顯示防守動畫
-        atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir);
+        atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir-90f);
+        atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
+        yield return null;
     }
     void DefBreak()
     {
@@ -311,6 +319,8 @@ public class internetPlayer : NetworkBehaviour
 
         myGamelinker.DefCall = true;
         dirInput.allowInputDef = false;
+
+        atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 255f);
     }
 }
 

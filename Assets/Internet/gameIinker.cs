@@ -158,7 +158,7 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
                 //data3.cur = myPlayer.Cur;
                 data3.DefFinished = true;
 
-                DefCall = true;
+                DefCall = false;
 
                 Debug.Log("防守資料上傳");
                 input.Set(data3);
