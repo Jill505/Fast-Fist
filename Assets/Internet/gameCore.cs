@@ -30,6 +30,8 @@ public class gameCore : NetworkBehaviour
 
     [Networked] public float SwapEnergyRecover { get; set; }
 
+    [Networked] public int roundPassed { get; set; }
+
     //回合歸屬(誰為攻方)
     [Networked] public bool turnToPlayer0{ get; set; }
 
@@ -41,9 +43,16 @@ public class gameCore : NetworkBehaviour
     //開始呼叫
     [Networked] public bool startGameBool { get; set; }
 
-    //本地數據
+    //網路呼叫
+    [Networked] public bool endGameBool { get; set; }
+
+    //本地數據 
     public AudioSource bgmPlayer;
+    public AudioSource effectPlayer;
     public circleRounding AttackAllowCircle;
+    public bool gameEndBlock;
+
+    public GameObject blackFilter;
 
     public Text swapFrameShow;
 
@@ -86,16 +95,17 @@ public class gameCore : NetworkBehaviour
         //數據同步
         nextRoundCoolDown = 0.6f;
         //playMusic
-        bgmPlayer.clip = Resources.Load<AudioClip>("DelFile/CommonEXEmusic");//Capture BGM
+        bgmPlayer.clip = Resources.Load<AudioClip>("combatFile/FastFist_Fighting_common");//Capture BGM
         bgmPlayer.Play();
         //playAnimation
-        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("遊戲... 開始!\n 正在播放：CommonEXEmusic");
+        //GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("遊戲... 開始!\n 正在播放：CommonEXEmusic");
 
         //Start play
         yield return new WaitForSeconds(4f);
         //如果要Random纖手玩家 這邊宣告
         turnToPlayer0 = true;
         startGameBool = true;
+        endGameBool = false;
         AttackCall = true;
         yield return null;
     }
@@ -205,7 +215,20 @@ public class gameCore : NetworkBehaviour
                 }
             }
         }
-
+        if (startGameBool)
+        {
+            if (endGameBool)
+            {
+                if (!gameEndBlock)
+                {
+                    gameEndBlock = true;
+                    //執行內容
+                    bgmPlayer.Stop();
+                    effectPlayer.Play();
+                    blackFilter.SetActive(true);
+                }
+            }
+        }
         swapFrameShow.text = "現在架式：" + Frame;
     }
     

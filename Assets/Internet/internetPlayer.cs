@@ -237,6 +237,7 @@ public class internetPlayer : NetworkBehaviour
 
         //delLaterJustMakeSure++;
         //atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, delLaterJustMakeSure);
+        atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir);
     }
 
     public void CharacterGivingValue(int characterSorting)
@@ -250,13 +251,13 @@ public class internetPlayer : NetworkBehaviour
         if (characterSorting == 0)
         {
             //Defult Character
-            Hps = 60f;
-            Str = 30f;
-            Rac = 90f;
-            Cur = 90f;
+            Hps = 100f;
+            Str = 10f;
+            Rac = 300f;
+            Cur = 120f;
             Ablock = 0.2f;
 
-            AtkTime = 1f;
+            AtkTime = 5f;
 
             UltComsume = 150f;
             MaxmentEnergy = 150f;
@@ -279,6 +280,7 @@ public class internetPlayer : NetworkBehaviour
         yield return null;
         //顯示攻擊提示圓圈
         attackHintCircle.showMe();
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("輪到你進行攻擊了！");
     }
     void AtkBreak()
     {
@@ -287,16 +289,25 @@ public class internetPlayer : NetworkBehaviour
 
     IEnumerator Def()
     {
+        Invoke("DefBreak", Rac/100);
         yield return null;
         dirInput.allowInputDef = true;
         //顯示防守動畫
-        atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir-90f);
+        //atkDirFistHint.transform.rotation = Quaternion.Euler(0f, 0f, gameCores.SwapAtkDir-90f);
         atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f, 255f);
+        GameObject.Find("universalHintWord").GetComponent<hintWord>().startHint("攻擊來了 快格檔！");
         yield return null;
     }
     void DefBreak()
     {
+        DefDir = -1000f;
+
+        CancelInvoke("DefBreak");
+
+        myGamelinker.DefCall = true;
         dirInput.allowInputDef = false;
+
+        atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
     }
 
     public void AtkDataGiving(float attackDiraction)
@@ -320,7 +331,7 @@ public class internetPlayer : NetworkBehaviour
         myGamelinker.DefCall = true;
         dirInput.allowInputDef = false;
 
-        atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 255f);
+        atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
     }
 }
 
