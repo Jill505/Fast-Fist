@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using UnityEngine.UI;
 
 public class internetPlayer : NetworkBehaviour
 {
@@ -14,6 +15,7 @@ public class internetPlayer : NetworkBehaviour
 
     public DirInput dirInput;
     public circleRounding attackHintCircle;
+    public Image fillAmountImage;
 
     public GameObject atkDirFistHint;//之後斟酌刪
 
@@ -77,6 +79,7 @@ public class internetPlayer : NetworkBehaviour
         dirInput.myInternetPlayer = this;
         attackHintCircle = dirInput.gameObject.transform.GetChild(0).GetComponent<circleRounding>();
         atkDirFistHint = GameObject.Find("fist_Defult");
+        fillAmountImage = GameObject.Find("skillButton").GetComponent<Image>();
 
         //playerName = localDataBase.PlayerData.Name;
     }
@@ -107,6 +110,14 @@ public class internetPlayer : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
+        if (Energy > MaxmentEnergy)
+        {
+            Energy = MaxmentEnergy;
+        }
+        if (Object.HasInputAuthority)
+        {
+            fillAmountImage.fillAmount = Energy / MaxmentEnergy;
+        }
 
         //playerName = localDataBase.PlayerData.Name;
         gameCores.Rpc_namePlayer();
@@ -167,6 +178,11 @@ public class internetPlayer : NetworkBehaviour
             Energy = data5.Energy;
         }
 
+        if (GetInput(out DebugSpace data6))
+        {
+            AtkDir = data6.debugAtkDir;
+            DefDir = data6.debugDefDir;
+        }
 
         if (Object.HasInputAuthority)//玩家有該角色操控權限
         {
@@ -251,11 +267,11 @@ public class internetPlayer : NetworkBehaviour
         if (characterSorting == 0)
         {
             //Defult Character
-            Hps = 100f;
-            Str = 10f;
-            Rac = 300f;
-            Cur = 120f;
-            Ablock = 0.2f;
+            Hps = 60f;
+            Str = 30f;
+            Rac = 100f;
+            Cur = 90f;
+            Ablock = 0.1f;
 
             AtkTime = 5f;
 
@@ -332,6 +348,22 @@ public class internetPlayer : NetworkBehaviour
         dirInput.allowInputDef = false;
 
         atkDirFistHint.GetComponent<SpriteRenderer>().color = new Color(255f, 255f, 255f, 0f);
+    }
+
+    public void usingSkill()
+    {
+        if (Energy >= UltComsume)
+        {
+            if (characterSelectionSort == 0)
+            {
+
+            }
+            else if (characterSelectionSort == 1)
+            {
+
+            }
+
+        }
     }
 }
 

@@ -52,7 +52,12 @@ public class gameCore : NetworkBehaviour
     public circleRounding AttackAllowCircle;
     public bool gameEndBlock;
 
+        //Centrol控制
+    public GameObject UIpos;
     public GameObject blackFilter;
+    public GameObject killLIne0;
+    public GameObject killLine1;
+    public GameObject FramePos;
 
     public Text swapFrameShow;
 
@@ -62,6 +67,12 @@ public class gameCore : NetworkBehaviour
 
     public Text player0Name;
     public Text player1Name;
+
+    private void Start()
+    {
+        endGameBool = false;
+        gameEndBlock = false;
+    }
 
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void Rpc_namePlayer()
@@ -215,10 +226,14 @@ public class gameCore : NetworkBehaviour
                 }
             }
         }
+
+
         if (startGameBool)
         {
-            if (endGameBool)
+            Debug.Log("遊戲進行中");
+            if (endGameBool)//遊戲結束
             {
+                Debug.Log("遊戲結束");
                 if (!gameEndBlock)
                 {
                     gameEndBlock = true;
@@ -228,7 +243,19 @@ public class gameCore : NetworkBehaviour
                     blackFilter.SetActive(true);
                 }
             }
+
+            if (p0 != null)
+            {
+                killLIne0.transform.position = new Vector3(-p0.Hps*5.1f, 0f, 0f)+ UIpos.transform.position;
+            }
+            if (p1 != null)
+            {
+                killLine1.transform.position = new Vector3(p1.Hps* 5.1f, 0f, 0f) + UIpos.transform.position;
+            }
+
+            FramePos.transform.position = new Vector3(Frame * 5.1f, 0f, 0f) + UIpos.transform.position;
         }
+
         swapFrameShow.text = "現在架式：" + Frame;
     }
     
@@ -328,9 +355,11 @@ public class gameCore : NetworkBehaviour
             {
                 //斬殺P1
                 Debug.Log("P1斬殺!");
+                endGameBool = true;
             }
             Debug.Log("P1受到了"+SwapFrameChange+"點架式傷害!");
             Frame += SwapFrameChange;
+            p1.Energy += SwapEnergyRecover;
         }
         else//玩家1攻擊
         {
@@ -338,9 +367,11 @@ public class gameCore : NetworkBehaviour
             {
                 //斬殺P0
                 Debug.Log("P0斬殺!");
+                endGameBool = true;
             }
             Debug.Log("P0受到了" + SwapFrameChange + "點架式傷害!");
             Frame -= SwapFrameChange;
+            p0.Energy += SwapEnergyRecover;
         }
 
         yield return new WaitForSeconds(nextRoundCoolDown);

@@ -164,6 +164,13 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
                 input.Set(data3);
             }
 
+            //DebugSpace
+            var data6 = new DebugSpace();
+
+            data6.debugAtkDir = MyDirInput.returnValue;
+            data6.debugDefDir = MyDirInput.returnValue;
+            //DebugSpace
+
             var data5 = new PlayerInformation();
 
             data5.Hps = myPlayer.Hps;

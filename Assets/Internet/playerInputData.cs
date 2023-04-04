@@ -56,3 +56,9 @@ public struct TestStruck : INetworkInput
 {
     public int uploadInt;
 }
+
+public struct DebugSpace : INetworkInput
+{
+    public float debugAtkDir;
+    public float debugDefDir;
+}
