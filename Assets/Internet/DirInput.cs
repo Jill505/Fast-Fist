@@ -24,7 +24,7 @@ public class DirInput : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("我 最棒的DirInput 執行了");
+        Debug.Log("我最棒的DirInput開始執行執行了");
 
         allowRange = 50f;
         //("makeDis", 0f);
