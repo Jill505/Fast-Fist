@@ -6,6 +6,7 @@ public class dirInputSolo : MonoBehaviour
 {
     public GameObject arrow;
     public soloMob theMob;
+    public soloCenter Center;
 
     //public float dir;//CNM
     public float allowRange;
@@ -50,11 +51,21 @@ public class dirInputSolo : MonoBehaviour
             //發出訊告 告知完成了
             if (allowInputAtk)
             {
+                Center.atkHintRing.SetTrigger("hide");
+                //怪物受傷害
+                theMob.mobDefence(Center.player.Str);
+
+                allowInputAtk = !allowInputAtk;
+
+                Center. NextRoundJudgement();
 
             }
             if (allowInputDef)
             {
+                Center.playerReactMobNormalAttack(returnValue, theMob.mobdir);
+                allowInputDef = !allowInputDef;
 
+                Center.NextRoundJudgement();
             }
         }
     }

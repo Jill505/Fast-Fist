@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/combat.unity
     guid: 853e8c6ae4633ef4a8296d04861368a4
+  - enabled: 1
+    path: Assets/Scenes/soloGame.unity
+    guid: 00a0a796c65b5af49baaeabeb7df20ac
+  - enabled: 1
+    path: Assets/Scenes/soloGameTestRoom.unity
+    guid: 7a2aa4a8db3fa864b89bcc25c6e6db13
   m_configObjects: {}

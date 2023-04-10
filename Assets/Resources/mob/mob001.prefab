@@ -45,13 +45,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mobSort: 0
+  mobdir: 0
   mobName: "\u4E94\u901F\u7121\u982D\u602A"
-  Hps: 0
-  Str: 0
-  Rac: 0
-  Cur: 0
+  Hps: 90
+  Str: 35
+  Rac: 40
+  Cur: 40
   Ablock: 0
-  ultComsume: 0
+  ultComsume: 300
   wantToStab: 0
   addtionalStab: 1
   wantToUlt: 0
@@ -59,4 +60,4 @@ MonoBehaviour:
   wantToNAttack: 4
   addtionalNA: 4
   ABrate: 0.1
-  CBrate: 0.2
+  CBrate: 0.6

@@ -9,13 +9,14 @@ public class soloMob : MonoBehaviour
 
     public int mobSort;
 
+    public float mobdir;
     public string mobName;
 
     public float Hps;
     public float Str;
-    public float Rac;
-    public float Cur;
-    public float Ablock;
+    public float Rac;//也許有用?
+    public float Cur;//無用
+    public float Ablock;//無用
 
     public float ultComsume;
 
@@ -54,24 +55,36 @@ public class soloMob : MonoBehaviour
 
     public void mobAttack()
     {
-        if (wantToUlt > ultComsume)
+        if (SoloCenter.Frame<(-1* SoloCenter.player.Hps))
         {
-            mobUlt();
-            wantToUlt = 0f;
+            //玩家斬殺
+            SoloCenter.Slain();
         }
-        else if (wantToStab > wantToNAttack)
+        else 
         {
-            mobStab();
-            wantToStab = 0f;
-        }
-        else
-        {
-            mobNormalAttack();
-        }
+            if (wantToUlt > ultComsume)
+            {
+                mobUlt();
+                wantToUlt = 0f;
 
-        wantToUlt += addtionalUlt + Random.Range(0f, 50f);
-        wantToStab += addtionalStab;
-        wantToNAttack += addtionalNA;
+                wantToStab += addtionalStab;
+                wantToNAttack += addtionalNA;
+            }
+            else if (wantToStab > wantToNAttack)
+            {
+                mobStab();
+                wantToStab = 0f;
+                wantToNAttack += addtionalNA;
+            }
+            else
+            {
+                mobNormalAttack();
+
+                wantToStab += addtionalStab;
+            }
+
+            wantToUlt += addtionalUlt + Random.Range(0f, 50f);
+        }
     }
 
     public virtual float mobDefence(float str)
@@ -82,14 +95,25 @@ public class soloMob : MonoBehaviour
         {
             //完美格檔
             blockRate = 1f;
+            SoloCenter.Frame += 0f;
+            SoloCenter.PlayASound();
+            Debug.Log(SoloCenter.mob.mobName + "完美格檔");
         }
         else if (blockRate <= CBrate)
         {
             //不完美
+            float damageMaked = str * (Random.Range(0f, 100f) / 100f);
+            //加料
+            SoloCenter.Frame += damageMaked;
+            SoloCenter.PlayGoodSound();
+            Debug.Log(SoloCenter.mob.mobName + "不完美格檔");
         }
         else
         {
             blockRate = 0f;
+            SoloCenter.Frame += str;
+            SoloCenter.PlayCSound();
+            Debug.Log(SoloCenter.mob.mobName + "格檔失敗");
         }
 
         return blockRate;
@@ -102,8 +126,8 @@ public class soloMob : MonoBehaviour
     public virtual void mobNormalAttack()
     {
         //啟動玩家普通防禦
-        float dir = Random.Range(0f,360f);
-        SoloCenter.mobNormalAttack(dir);
+        mobdir = Random.Range(0f,360f);
+        SoloCenter.mobNormalAttack(mobdir);
         
     }
     public virtual void mobSpecialAttack()
@@ -150,5 +174,10 @@ public class soloMob : MonoBehaviour
             wantToNAttack = 4f;
             addtionalNA = 4f;
         }
+    }
+
+    public void invokePass(float passtime)
+    {
+        Invoke("mobAttack", passtime);
     }
 }

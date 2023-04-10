@@ -20,13 +20,41 @@ public class soloCenter : MonoBehaviour
     public GameObject Fist;
     public Animator defHintFist;
 
+    public AudioSource AudioPlayer;
+    public AudioClip AcuracyHitSound;
+    public AudioClip GoodHitSound;
+    public AudioClip CompleatsHitSound;
+    public AudioClip SlainSound;
+
+    public GameObject theFramePos;
+    public GameObject midPoint;
+    public GameObject PlayerPos;
+    public GameObject MobPos;
+
+    public GameObject GameEndVail;
+    public Text EndWord;
+
     public float Frame;
+    /*{ get { return frame; } 
+        set
+        { //update
+            frame += value;
+        } 
+    
+    }*/
 
     public int stageSort;//關卡序列
 
     public Text mobNameText;
 
     public float mobAttackDir;
+
+    public void Slain()
+    {
+        GameEndVail.SetActive(true);
+        AudioPlayer.clip = SlainSound;
+        AudioPlayer.Play();
+    }
 
     public IEnumerator gameStart()
     {
@@ -38,7 +66,11 @@ public class soloCenter : MonoBehaviour
         }
 
         gameStarted = true;
+        DirInputSolo.allowInputAtk = true;
+        //atkHintRing.SetTrigger("show");
         //開始播放音樂
+        yield return null;
+
         yield return null;
     }
     // Start is called before the first frame update
@@ -51,6 +83,13 @@ public class soloCenter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log("YA"+ theFramePos.transform.position);
+        theFramePos.transform.position = new Vector3(Frame * 3.3f, 0f, 0f) + midPoint.transform.position;
+        PlayerPos.transform.position = new Vector3(player.Hps*-3.3f, 0f, 0f) + midPoint.transform.position; 
+        MobPos.transform.position = new Vector3(mob.Hps*3.3f, 0f, 0f) + midPoint.transform.position;
+
+
+
         if (gameStarted)
         {
             if (turnToPlayer)
@@ -61,6 +100,7 @@ public class soloCenter : MonoBehaviour
                     casting = true;
                     DirInputSolo.allowInputAtk = true;
                     //顯示攻擊圈
+                    atkHintRing.SetTrigger("show");
                 }
                 //等待
             }
@@ -85,6 +125,7 @@ public class soloCenter : MonoBehaviour
     //怪物普通攻擊接口
     public void mobNormalAttack(float dir)
     {
+        mobAttackDir = dir;
         DirInputSolo.allowInputDef= true;
         Fist.transform.localEulerAngles = new Vector3(0,0,dir);
         defHintFist.SetTrigger("show");
@@ -103,90 +144,123 @@ public class soloCenter : MonoBehaviour
         float ABlockMinimentRange = mobDir - (player.Cur / 2 * player.Ablock);
 
         int SwapDamageType = 0;
-
-        //精準格檔判斷
-        if (ABlockMaxmentRange >= playerReturnDir && playerReturnDir >= ABlockMinimentRange)
+        
+        //斬殺在這
+        if (mob.Hps < Frame)
         {
-            SwapDamageType = 2;
+            //斬殺
+            Slain();
         }
-        else if (ABlockMaxmentRange > 360f)
-        {
-            if (playerReturnDir <= (ABlockMaxmentRange - 360f))
-            {
-                SwapDamageType = 2;
-            }
-        }
-        else if (ABlockMinimentRange < 0f)
-        {
-            if ((ABlockMinimentRange + 360f) <= playerReturnDir)
-            {
-                SwapDamageType = 2;
-            }
-        }
-
-        //普通格檔判斷
-        else if (MaxmentRange >= playerReturnDir && playerReturnDir >= MinimentRange)
-        {
-            SwapDamageType = 1;
-        }
-        else if (MaxmentRange > 360f)
-        {
-            if (playerReturnDir <= (MaxmentRange - 360f))
-            {
-                SwapDamageType = 1;
-            }
-        }
-        else if (MinimentRange < 0f)
-        {
-            if ((MinimentRange + 360f) <= playerReturnDir)
-            {
-                SwapDamageType = 1;
-            }
-        }
-        //完整受傷
         else
         {
-            SwapDamageType = 0;
-        }
-
-        //受傷判斷
-        if (SwapDamageType == 2)
-        {
-            Debug.Log("精確格檔!");
-            Frame -= mobDir * 0f;
-            player.Energy += 100f * 1f;
-
-
-        }
-        else if (SwapDamageType == 1)
-        {
-            Debug.Log("部分格檔");
-            //精準度計算
-            if (MaxmentRange > 360f && MinimentRange > playerReturnDir)
+            //精準格檔判斷
+            if (ABlockMaxmentRange >= playerReturnDir && playerReturnDir >= ABlockMinimentRange)
             {
-                playerReturnDir += 360f;
+                SwapDamageType = 2;
             }
-            else if (MinimentRange < 0f && playerReturnDir > MaxmentRange)
+            else if (ABlockMaxmentRange > 360f)
             {
-                playerReturnDir -= 360f;
+                if (playerReturnDir <= (ABlockMaxmentRange - 360f))
+                {
+                    SwapDamageType = 2;
+                }
             }
-            float AcureatPercent = Mathf.Abs(mobDir - playerReturnDir) * (1 / player.Cur);
-            Debug.Log("格檔精準率：" + AcureatPercent);
+            else if (ABlockMinimentRange < 0f)
+            {
+                if ((ABlockMinimentRange + 360f) <= playerReturnDir)
+                {
+                    SwapDamageType = 2;
+                }
+            }
 
-            Frame -= mobDir * (1f - AcureatPercent);
-            player.Energy += 100f * AcureatPercent;
+            //普通格檔判斷
+            else if (MaxmentRange >= playerReturnDir && playerReturnDir >= MinimentRange)
+            {
+                SwapDamageType = 1;
+            }
+            else if (MaxmentRange > 360f)
+            {
+                if (playerReturnDir <= (MaxmentRange - 360f))
+                {
+                    SwapDamageType = 1;
+                }
+            }
+            else if (MinimentRange < 0f)
+            {
+                if ((MinimentRange + 360f) <= playerReturnDir)
+                {
+                    SwapDamageType = 1;
+                }
+            }
+            //完整受傷
+            else
+            {
+                SwapDamageType = 0;
+            }
 
+        
+            //受傷判斷
+            if (SwapDamageType == 2)
+            {
+                Debug.Log("精確格檔!");
+                Frame -= mob.Str * 0f;
+                player.Energy += 100f * 1f;
 
+                PlayASound();
+            }
+            else if (SwapDamageType == 1)
+            {
+                Debug.Log("部分格檔");
+                //精準度計算
+                if (MaxmentRange > 360f && MinimentRange > playerReturnDir)
+                {
+                    playerReturnDir += 360f;
+                }
+                else if (MinimentRange < 0f && playerReturnDir > MaxmentRange)
+                {
+                    playerReturnDir -= 360f;
+                }
+                float AcureatPercent = Mathf.Abs(mobDir - playerReturnDir) * (1 / player.Cur);
+                Debug.Log("格檔精準率：" + AcureatPercent);
+
+                Frame -= mob.Str * (1f - AcureatPercent);
+                player.Energy += 100f * AcureatPercent;
+
+                PlayGoodSound();
+            }
+            else if (SwapDamageType == 0)
+            {
+                Debug.Log("完全命中!");
+                Frame -= mob.Str * 1f;
+                player.Energy += 100f * 0f;
+
+                PlayCSound();
+            }
         }
-        else if (SwapDamageType == 0)
-        {
-            Debug.Log("完全命中!");
-            Frame -= mobDir * 1f;
-            player.Energy +=  100f * 0f;
+    }
 
+    public void PlayASound()
+    {
+        AudioPlayer.clip = AcuracyHitSound;
+        AudioPlayer.Play();
+    }
 
-        }
+    public void PlayGoodSound()
+    {
+        AudioPlayer.clip = GoodHitSound;
+        AudioPlayer.Play();
+    }
 
+    public void PlayCSound()
+    {
+        AudioPlayer.clip = CompleatsHitSound;
+        AudioPlayer.Play();
+    }
 
+    public void NextRoundJudgement()
+    {
+        turnToPlayer = !turnToPlayer;
+
+        casting = false;
     }
 }

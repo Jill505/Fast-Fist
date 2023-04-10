@@ -13,4 +13,14 @@ public class lobbyFunction : MonoBehaviour
         Debug.Log(sessionName);
         SceneManager.LoadScene("combat");
     }
+
+    public void StartSoloGame()
+    {
+        SceneManager.LoadScene("soloGameTestRoom");
+    }
+
+    public void mute()
+    {
+        bgmController.isMute = !bgmController.isMute;
+    }
 }
