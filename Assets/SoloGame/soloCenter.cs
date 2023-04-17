@@ -25,6 +25,7 @@ public class soloCenter : MonoBehaviour
     public AudioClip GoodHitSound;
     public AudioClip CompleatsHitSound;
     public AudioClip SlainSound;
+    public AudioClip StabSound;
 
     public GameObject theFramePos;
     public GameObject midPoint;
@@ -130,6 +131,15 @@ public class soloCenter : MonoBehaviour
         Fist.transform.localEulerAngles = new Vector3(0,0,dir);
         defHintFist.SetTrigger("show");
         //Animation Active
+    }
+    public void mobStab(float area)
+    {
+
+    }
+
+    public void playerRecat()
+    {
+
     }
 
     public void playerReactMobNormalAttack(float playerReturnDir, float mobDir)
