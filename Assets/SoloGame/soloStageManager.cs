@@ -7,6 +7,7 @@ public class soloStageManager : MonoBehaviour
 {
     public int stageNumber;
     public soloCenter center;
+    public SpriteRenderer backgroundImage;
 
     public int stageLevel;//關卡內層數
 
@@ -31,6 +32,7 @@ public class soloStageManager : MonoBehaviour
             Debug.Log(mob.name+"cpatured");
             mob.GetComponent<soloMob>().mobSort = 0;
             mobNameText.text = mob.GetComponent<soloMob>().mobName;
+            backgroundImage.sprite = Resources.Load<Sprite>("background/background001");
         }
     }
 }

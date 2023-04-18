@@ -37,6 +37,8 @@ public class dirInputSolo : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(pt0 + "RECT-" + pt0.rect.position + "   transfrom：" + pt0.transform.position);
+
         if (Input.GetMouseButtonDown(0))
         {
             lastPos = Input.mousePosition;
@@ -84,15 +86,16 @@ public class dirInputSolo : MonoBehaviour
             {
                 // 在這裡進行點擊位置的相關處理
                 Debug.Log("Mouse clicked at local position: " + localPoint);
+                Debug.Log(pt0 + "RECT-"+ pt0.rect.position + "   transfrom：" + pt0.transform.position);
 
-                if (localPoint.x > pt0.rect.x)
+                if (localPoint.x > pt0.rect.position.x)
                 {
-                    if (localPoint.y > pt0.rect.y)
+                    if (localPoint.y > pt0.rect.position.y)
                     {
                         //1
                         Debug.Log("area1");
                     }
-                    else if (localPoint.y > pt2.rect.y)
+                    else if (localPoint.y > pt2.rect.position.y)
                     {
                         //2
                         Debug.Log("area2");
