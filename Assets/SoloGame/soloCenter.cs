@@ -20,6 +20,7 @@ public class soloCenter : MonoBehaviour
     public Animator atkHintRing;
     public GameObject Fist;
     public Animator defHintFist;
+    public Animator theFist;
 
     public AudioSource AudioPlayer;
     public AudioClip AcuracyHitSound;
@@ -35,6 +36,11 @@ public class soloCenter : MonoBehaviour
 
     public GameObject GameEndVail;
     public Text EndWord;
+
+
+    public GameObject Mob;
+    public Animator MobAnimator;
+
 
     public float Frame;
     /*{ get { return frame; } 
@@ -129,9 +135,12 @@ public class soloCenter : MonoBehaviour
     {
         mobAttackDir = dir;
         DirInputSolo.allowInputDef= true;
-        Fist.transform.localEulerAngles = new Vector3(0,0,dir);
+        Fist.transform.localEulerAngles = new Vector3(0,0,dir+90f);
+
         defHintFist.SetTrigger("show");
+        theFist.SetTrigger("punchedDown");
         //Animation Active
+        StartCoroutine(touch());
     }
     public void mobStab(float area)
     {
@@ -278,5 +287,19 @@ public class soloCenter : MonoBehaviour
     public void BackToLobby()
     {
         SceneManager.LoadScene("Lobby");
+    }
+
+    public IEnumerator touch()
+    {
+        yield return new WaitForSeconds(0.36f);
+        theFist.speed = 0.1f;
+        yield return new WaitForSeconds(player.Rac - 36f);
+        //casting ±j¨îµ²§ô
+
+        theFist.speed = 1f;
+        playerReactMobNormalAttack(55688f, DirInputSolo.theMob.mobdir);
+        DirInputSolo.allowInputDef = !DirInputSolo.allowInputDef;
+
+        NextRoundJudgement();
     }
 }
