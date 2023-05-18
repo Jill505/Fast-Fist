@@ -22,6 +22,8 @@ public class soloStageManager : MonoBehaviour
 
     public void StartGame()
     {
+        stageNumber = Random.Range(0, 2);
+
 
         if (stageNumber == 0)
         {
@@ -30,6 +32,15 @@ public class soloStageManager : MonoBehaviour
             GameObject mob = Resources.Load<GameObject>("mob/mob001");
             Instantiate( mob, transform.position,transform.rotation);
             Debug.Log(mob.name+"cpatured");
+            mob.GetComponent<soloMob>().mobSort = 0;
+            mobNameText.text = mob.GetComponent<soloMob>().mobName;
+            backgroundImage.sprite = Resources.Load<Sprite>("background/background001");
+        }
+        else if (stageNumber == 1)
+        {
+            GameObject mob = Resources.Load<GameObject>("mob/mob002");
+            Instantiate(mob, transform.position, transform.rotation);
+            Debug.Log(mob.name + "cpatured");
             mob.GetComponent<soloMob>().mobSort = 0;
             mobNameText.text = mob.GetComponent<soloMob>().mobName;
             backgroundImage.sprite = Resources.Load<Sprite>("background/background001");

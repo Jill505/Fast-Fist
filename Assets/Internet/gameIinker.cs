@@ -49,18 +49,18 @@ public class gameIinker : MonoBehaviour, INetworkRunnerCallbacks
 
     async void StartGame(GameMode mode)
     {
-        string sessionNameSwap = GameObject.Find("UI").transform.GetChild(1).GetComponent<InputField>().text;
+        /*string sessionNameSwap = GameObject.Find("UI").transform.GetChild(1).GetComponent<InputField>().text;
         if (GameObject.Find("UI").transform.GetChild(1).GetComponent<InputField>().text == null)
         {
             sessionNameSwap = "DefultRoom";//防止玩家沒有輸入房間名
-        }
+        }*/ 
 
         networkRunner.ProvideInput = true;//提供權限
 
         await networkRunner.StartGame(new StartGameArgs()
         {
             GameMode = mode,
-            SessionName = sessionNameSwap,
+            SessionName = "DefultRoom",
             //Scene = SceneManager.GetActiveScene().buildIndex,
             Scene = 2,//combat場景
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()

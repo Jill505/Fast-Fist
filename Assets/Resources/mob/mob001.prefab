@@ -62,6 +62,9 @@ MonoBehaviour:
   addtionalNA: 4
   ABrate: 0.1
   CBrate: 0.6
+  normalPic: {fileID: 21300000, guid: 54a5c3285a400eb4ba57d03f23638bc9, type: 3}
+  attackPic: {fileID: 21300000, guid: b6b41ce8b336b104c86d4a2bac019a76, type: 3}
+  defPic: {fileID: 0}
 --- !u!212 &3471158644043040775
 SpriteRenderer:
   m_ObjectHideFlags: 0

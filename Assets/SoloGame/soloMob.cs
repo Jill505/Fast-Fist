@@ -31,26 +31,46 @@ public class soloMob : MonoBehaviour
 
     public float ABrate = 0.1f;
     public float CBrate = 0.2f;
-    
+
+    SpriteRenderer sr;
+
+    public Sprite normalPic;
+    public Sprite attackPic;
+    public Sprite defPic;
 
     private void Awake()
     {
+        sr = gameObject.GetComponent<SpriteRenderer>();
         SoloCenter = GameObject.Find("SoloCenter").GetComponent<soloCenter>();
         GameObject.Find("SoloCenter").GetComponent<soloCenter>().mob = this;
         dirInput = GameObject.Find("DirInput").GetComponent<dirInputSolo>();
         dirInput.theMob = this;
+        transform.parent = GameObject.Find("mobMovement").transform;
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    public void changeToAttackPic()
+    {
+        sr.sprite = attackPic;
+    }
+    public void changeToNormalPic()
+    {
+        sr.sprite = normalPic;
+    }
+    public void changeToDefPic()
+    {
+        sr.sprite = defPic;
     }
 
     public void mobAttack()

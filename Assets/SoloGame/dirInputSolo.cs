@@ -73,6 +73,7 @@ public class dirInputSolo : MonoBehaviour
                 Center.NextRoundJudgement();
 
                 Center.theFist.speed = 1f;
+                Center.mobMovement.SetBool("Attack", false);
                 StopCoroutine(Center.touch());
             }
         }

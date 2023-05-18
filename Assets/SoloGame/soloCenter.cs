@@ -21,6 +21,7 @@ public class soloCenter : MonoBehaviour
     public GameObject Fist;
     public Animator defHintFist;
     public Animator theFist;
+    public Animator mobMovement;
 
     public AudioSource AudioPlayer;
     public AudioClip AcuracyHitSound;
@@ -135,7 +136,7 @@ public class soloCenter : MonoBehaviour
     {
         mobAttackDir = dir;
         DirInputSolo.allowInputDef= true;
-        Fist.transform.localEulerAngles = new Vector3(0,0,dir+90f);
+        Fist.transform.localEulerAngles = new Vector3(0,0,dir);
 
         defHintFist.SetTrigger("show");
         theFist.SetTrigger("punchedDown");
@@ -154,6 +155,9 @@ public class soloCenter : MonoBehaviour
 
     public void playerReactMobNormalAttack(float playerReturnDir, float mobDir)
     {
+        Debug.Log(playerReturnDir + "艾瑪" + mobDir);
+
+
         defHintFist.SetTrigger("hide");
 
         //計算、同步
@@ -293,9 +297,14 @@ public class soloCenter : MonoBehaviour
     {
         yield return new WaitForSeconds(0.36f);
         theFist.speed = 0.1f;
+
+        //Mob動畫
+        mobMovement.SetBool("Attack",true);
+        //mob.changeToAttackPic();
         yield return new WaitForSeconds(player.Rac - 36f);
         //casting 強制結束
-
+        mobMovement.SetBool("Attack", false);
+        //mob.changeToNormalPic();
         theFist.speed = 1f;
         playerReactMobNormalAttack(55688f, DirInputSolo.theMob.mobdir);
         DirInputSolo.allowInputDef = !DirInputSolo.allowInputDef;
